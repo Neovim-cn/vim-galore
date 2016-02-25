@@ -61,53 +61,48 @@
 - [快速跳转到源(头)文件](#quickly-jump-to-header-or-source-file)
 - [在GUI中快速改变字体大小](#quickly-change-font-size-in-gui)
 - [根据模式改变光标类型](#change-cursor-style-dependent-on-mode)
-- [Don't lose selection when shifting sidewards](#dont-lose-selection-when-shifting-sidewards)
+- [不要在水平滑动的时候失去选择](#dont-lose-selection-when-shifting-sidewards)
+- [重新载入保存文件](#reload-a-file-on-saving)
+- [智能当前行](#smarter-cursorline)
+- [更快的关键字补全](#faster-keyword-completion)
 
-#### [Commands](#commands-1)
+#### [命令](#commands-1)
 
-- [:redir](#redir) - Redirect messages.
+- [:global](#global) - 在所有匹配行执行命令
+- [:normal and :execute](#normal-and-execute) - 脚本梦之队
+- [:redir](#redir) - 重定向消息
 
-#### [Debugging](#debugging-1)
+#### [调试](#debugging-1)
 
-- [General tips](#general-tips)
-- [Profiling startup time](#profiling-startup-time)
-- [Profiling at runtime](#profiling-at-runtime)
-- [Verbosity](#verbosity)
-- [Debugging Vim scripts](#debugging-vim-scripts)
-- [Debugging syntax files](#debugging-syntax-files)
+- [常规建议](#general-tips)
+- [启动时刨视](#profiling-startup-time)
+- [运行时刨视](#profiling-at-runtime)
+- [详细模式](#verbosity)
+- [vim脚本调试](#debugging-vim-scripts)
+- [语法文件调试](#debugging-syntax-files)
 
-#### [Miscellaneous](#miscellaneous-1)
+#### [杂项](#miscellaneous-1)
 
-- [Additional resources](#additional-resources)
-- [Vim distributions](#vim-distributions)
-- [Easter eggs](#easter-eggs)
-- [Why hjkl for navigation?](#why-hjkl-for-navigation)
+- [附加资源](#additional-resources)
+- [Vim 发布](#vim-distributions)
+- [标准插件](#standard-plugins)
+- [将Control映射到CapsLock](#map-capslock-to-control)
+- [复活节彩蛋](#easter-eggs)
+- [为何使用hjkl](#why-hjkl-for-navigation)
 
-#### [Quirks](#quirks-1)
+#### [奇事](#quirks-1)
 
-- [Editing small files is slow](#editing-small-files-is-slow)
-- [Editing huge files is slow](#editing-huge-files-is-slow)
-- [Newline used for NUL](#newline-used-for-nul)
-- [Bracketed paste (or why do I have to set 'paste' all the time?)](#bracketed-paste-or-why-do-i-have-to-set-paste-all-the-time)
-- [Delays when using escape key in terminal](#delays-when-using-escape-key-in-terminal)
+- [编辑小文件很慢](#editing-small-files-is-slow)
+- [编辑打文件很慢](#editing-huge-files-is-slow)
+- [新行用于NUL](#newline-used-for-nul)
+- [相同部分粘贴 (要不为什么我总要设置‘粘贴’?)](#bracketed-paste-or-why-do-i-have-to-set-paste-all-the-time)
+- [在终端使用Esc延时](#delays-when-using-escape-key-in-terminal)
 
-#### [List of colorschemes](#list-of-colorschemes-1)
+#### [配色主题](#list-of-colorschemes-1)
 
-#### [List of plugins](#list-of-plugins-1)
+#### [插件列表](content/plugins.md)
 
-- [Alignment](#alignment)
-- [Code completion](#code-completion)
-- [Commenters](#commenters)
-- [Delimiter](#delimiter)
-- [Fuzzy finders](#fuzzy-finders)
-- [Grep tools](#grep-tools)
-- [Navigation](#navigation)
-- [Statusline](#statusline)
-- [Taking notes](#taking-notes)
-- [Tmux](#tmux)
-- [Undo history](#undo-history)
-- [Version control](#version-control)
-- [Misc](#misc)
+#### [Neovim](content/neovim.md)
 
 ---
 
@@ -120,7 +115,7 @@ Moolenaar](https://en.wikipedia.org/wiki/Bram_Moolenaar) 于1991年发布初始�
 
 该项目托管在 [vim.org](http://www.vim.org/index.php).
 
-获取Vim: 使用你最喜欢的包管理器安装,或者从vim.org [下载](http://www.vim.org/download.php) .
+获取Vim: 使用你最喜欢的包管理器安装,或者在vim.org上[下载](http://www.vim.org/download.php) .
 
 讨论使用相关问题最好在
 [vim_use](https://groups.google.com/forum/#!forum/vim_use) 邮件列表或者使用IRC ([Freenode](https://freenode.net)) 的 `#vim` 频道.
@@ -131,6 +126,18 @@ Moolenaar](https://en.wikipedia.org/wiki/Bram_Moolenaar) 于1991年发布初始�
 阅读 [Why, oh WHY, do those #?@! nutheads use
 vi?](http://www.viemu.com/a-why-vi-vim.html), 对Vim有一个大致的了解.
 
+
+#### Vim 哲学
+
+Vim 坚持着模式编辑的理念. 这意味着他提供了多种模式，并根据模式，同一按键有不同含义。你可以在 _普通模式_下浏览文件, 在_ 插入模式_下插入文本, 在_可视模式_下选择行, 在_命令模式_下执行命令.
+这一开始听起来可能很复杂, 但是这有一个很大的优点: 你不需要让你的手指因为一次要同时按住很多键而受苦, 大多数时候你只要一个接着一个按.越常用的任务，所需要的按键数量越少. 
+
+动作和操作符是一个能在模式编辑中表现良好的概念._操作符_开始一些行为, e.g. 修改, 删除, 或者选择文本.之后你要用_动作_选择你要使用那些行为的文本区域。
+为了去改变括号内的内容, 使用 `ci(` (read _change inner
+parentheses_). 删除整个段落的内容, 使用 `dap` (read _delete
+around paragraph_).
+
+如果你能看见Vim高级用户工作,你会发现他们使用Vim语言就像钢琴师处理自己的乐器一样。复杂的操作只需要几个案件就能完成。他们甚至不用刻意去想，因为这已经成为[肌肉记忆](https://en.wikipedia.org/wiki/Muscle_memory)了. 这减少[认识负荷](https://en.wikipedia.org/wiki/Cognitive_load)并帮助人们专注与实际任务.
 #### 开始
 
 Vim自带一个交互式的教程,内含你需要了解的最基础的信息,你可以通过运行以下命令打开教程:
